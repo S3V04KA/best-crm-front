@@ -14,7 +14,9 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.crm-front.rule=Host(`${DOMAIN}`)"
       - "traefik.http.services.crm-front.loadbalancer.server.port=8080"
-      - "traefik.http.routers.crm-front.entryPoints=http,https"
+      - 'traefik.http.routers.crm.entrypoints=http,https'
+      - 'traefik.http.routers.crm.tls=true'
+      - "traefik.http.routers.crm.tls.certresolver=letsEncrypt"
       - "traefik.docker.network=traefik"
 
 networks:
