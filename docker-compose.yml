@@ -5,6 +5,8 @@ services:
       context: .
       dockerfile: Dockerfile
     image: best-crm-frontend:latest
+    env_file:
+      - .env
     networks:
       traefik:
     environment:

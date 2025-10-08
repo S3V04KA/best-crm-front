@@ -1,7 +1,7 @@
 import { OpenAPI } from "./core/OpenAPI";
 
 // Configure the base URL for the API
-OpenAPI.BASE = import.meta.env.VITE_API_BASE_URL || "/";
+OpenAPI.BASE = import.meta.env.VITE_API_BASE_URL || "";
 
 // Add JWT token to requests if available
 OpenAPI.TOKEN = async () => {
