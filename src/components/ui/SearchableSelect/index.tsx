@@ -126,13 +126,20 @@ const SearchableSelectContent = React.forwardRef<
     // Filter children based on search term
     const filteredChildren = React.Children.toArray(children).filter(
       (child) => {
-        if (!React.isValidElement(child)) return false;
+        if (!React.isValidElement<SelectItemProps>(child)) {
+          return false;
+        }
         if (child.type === SelectPrimitive.Item) {
+          if (!child.props.children) {
+            return false;
+          }
           const childText =
-            child.props.children?.toString().toLowerCase() || "";
+            typeof child.props.children === "string"
+              ? child.props.children.toLowerCase()
+              : child.props.children?.toString().toLowerCase() || "";
           return childText.includes(searchTerm.toLowerCase());
         }
-        return true; // Keep groups, labels, and separators
+        return true;
       }
     );
 
