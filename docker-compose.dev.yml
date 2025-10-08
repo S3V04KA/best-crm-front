@@ -1,0 +1,26 @@
+version: '3.9'
+services:
+  frontend-dev:
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: sh -c "npm i --force && npm run dev -- --host 0.0.0.0 --port 5173"
+    # ports:
+    #   - "5173:5173"
+    networks:
+      - traefik
+    environment:
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.crm-front.rule=Host(`crm.test.test`)"
+      - "traefik.http.services.crm-front.loadbalancer.server.port=5173"
+      - "traefik.http.routers.crm-front.entryPoints=http,https"
+      - "traefik.docker.network=traefik"
+
+networks:
+  traefik:
+    external: true
