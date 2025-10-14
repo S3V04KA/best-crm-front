@@ -21,7 +21,7 @@ export function LoginPage() {
       const redirectTo = "/workspaces";
       navigate(redirectTo);
     }
-  });
+  }, []);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

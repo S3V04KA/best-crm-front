@@ -83,7 +83,7 @@ export const EditCompanyDialog: React.FC<EditCompanyDialogProps> = ({
     if (!permissionedUpdate) return;
     loadTypes();
     loadUsers();
-  });
+  }, []);
 
   const onSave = async (isSend?: boolean) => {
     setError("");
