@@ -43,7 +43,13 @@ export interface Lead {
   responsibleId?: string;
 }
 
-export const AddCompanyDialog: React.FC = () => {
+interface AddCompanyDialogProps {
+  callback: () => void;
+}
+
+export const AddCompanyDialog: React.FC<AddCompanyDialogProps> = ({
+  callback,
+}) => {
   const workspaceId = useParams().workspaceId;
   const [open, setOpen] = useState(false);
   const [creating, setCreating] = useState(false);
@@ -74,6 +80,7 @@ export const AddCompanyDialog: React.FC = () => {
       );
       setOpen(false);
       setForm({});
+      callback();
     } catch (e: unknown) {
       const errorMessage =
         e instanceof Error ? e.message : "Ошибка при создании компании";

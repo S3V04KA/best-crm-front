@@ -37,6 +37,7 @@ interface EditCompanyDialogProps {
   setForm: (value: Partial<Lead>) => void;
   open: boolean;
   setOpen: (initialState: React.SetStateAction<boolean>) => void;
+  callback: () => void;
 }
 
 export const EditCompanyDialog: React.FC<EditCompanyDialogProps> = ({
@@ -44,6 +45,7 @@ export const EditCompanyDialog: React.FC<EditCompanyDialogProps> = ({
   setForm,
   open,
   setOpen,
+  callback,
 }) => {
   const { user } = useAuth();
   const workspaceId = useParams().workspaceId;
@@ -145,7 +147,7 @@ export const EditCompanyDialog: React.FC<EditCompanyDialogProps> = ({
 
       setOpen(false);
       setForm({});
-      window.location.reload();
+      callback();
     } catch (e: unknown) {
       const errorMessage =
         e instanceof Error ? e.message : "Ошибка при создании компании";

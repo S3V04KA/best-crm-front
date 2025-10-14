@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Input, Card, CardHeader, CardContent } from "@/components/ui";
 import { Mail, ArrowRight, Loader2 } from "lucide-react";
@@ -13,6 +13,15 @@ export function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+
+    if (token) {
+      const redirectTo = "/workspaces";
+      navigate(redirectTo);
+    }
+  }, []);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

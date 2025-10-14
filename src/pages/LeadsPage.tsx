@@ -94,7 +94,7 @@ export const LeadsPage: React.FC = () => {
             {checkPermissions(user?.permissions, [
               PermissionCodes.leadCreate,
             ]) ? (
-              <AddCompanyDialog />
+              <AddCompanyDialog callback={loadLeads} />
             ) : (
               ""
             )}
@@ -103,6 +103,7 @@ export const LeadsPage: React.FC = () => {
               setForm={setInitLead}
               open={open}
               setOpen={setOpen}
+              callback={loadLeads}
             />
           </div>
         </CardHeader>
