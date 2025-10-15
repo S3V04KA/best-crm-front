@@ -24,10 +24,10 @@ import { useAuth } from "@/contexts/useAuth";
 import { checkPermissions, PermissionCodes } from "@/types/permissions";
 
 const statusColors = {
-  0: "#007bffaa",
-  1: "#ffc107aa",
-  2: "#28a745aa",
-  3: "#dc3545aa",
+  0: "#007bff4a",
+  1: "#ffc1074a",
+  2: "#28a7454a",
+  3: "#dc35454a",
 };
 
 export const LeadsPage: React.FC = () => {
