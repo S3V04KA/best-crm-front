@@ -23,6 +23,13 @@ import { CallType, LeadStatus } from "@/types/lead";
 import { useAuth } from "@/contexts/useAuth";
 import { checkPermissions, PermissionCodes } from "@/types/permissions";
 
+const statusColors = {
+  0: "#007bffaa",
+  1: "#ffc107aa",
+  2: "#28a745aa",
+  3: "#dc3545aa",
+};
+
 export const LeadsPage: React.FC = () => {
   const { user } = useAuth();
   const workspaceId = useParams().workspaceId;
@@ -134,6 +141,11 @@ export const LeadsPage: React.FC = () => {
                 {leads.map((l) => (
                   <TableRow
                     key={l.id}
+                    style={{
+                      backgroundColor: l.status
+                        ? statusColors[l.status]
+                        : undefined,
+                    }}
                     onClick={() => {
                       setInitLead({
                         ...l,
