@@ -45,6 +45,22 @@ export class WorkspaceService {
         });
     }
     /**
+     * @param userId
+     * @returns ResponseWorkspaceDto
+     * @throws ApiError
+     */
+    public static workspaceControllerListUserWorkspaces(
+        userId: string,
+    ): CancelablePromise<Array<ResponseWorkspaceDto>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/workspaces/workspaces/user/{userId}',
+            path: {
+                'userId': userId,
+            },
+        });
+    }
+    /**
      * @param workspaceId
      * @returns ResponseWorkspaceDto
      * @throws ApiError
@@ -88,6 +104,25 @@ export class WorkspaceService {
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'PATCH',
+            url: '/api/workspaces/{workspaceId}/user/{userId}',
+            path: {
+                'workspaceId': workspaceId,
+                'userId': userId,
+            },
+        });
+    }
+    /**
+     * @param workspaceId
+     * @param userId
+     * @returns any
+     * @throws ApiError
+     */
+    public static workspaceControllerRemoveUser(
+        workspaceId: string,
+        userId: string,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
             url: '/api/workspaces/{workspaceId}/user/{userId}',
             path: {
                 'workspaceId': workspaceId,

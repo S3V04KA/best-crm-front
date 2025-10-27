@@ -65,10 +65,10 @@ export const ManageUserDialog: React.FC<ManageUserDialogProps> = ({
 
   const loadUserWorkspaces = async () => {
     try {
-      const data = await WorkspaceService.workspaceControllerListAll();
+      const data = await WorkspaceService.workspaceControllerListUserWorkspaces(user.id);
       // В реальности здесь должна быть загрузка workspace пользователя
       // но такого API нет, поэтому используем все workspace
-      setUserWorkspaces(data.map((w) => w.id));
+      setUserWorkspaces(data.map(w => w.id));
     } catch (e) {
       console.error("Ошибка при загрузке workspace пользователя:", e);
     }
