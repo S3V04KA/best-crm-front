@@ -5,6 +5,11 @@
 export type UserDto = {
     id: string;
     fullName: string;
+    role: {
+        id: string;
+        name: string;
+        code: string;
+    }
     email: string;
 };
 

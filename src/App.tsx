@@ -10,6 +10,7 @@ import { initTheme } from "@/utils/theme";
 import type { JSX } from "react";
 import { WorkspacesPage } from "./pages/WorkspacesPage";
 import { WorkspacePage } from "./pages/WorkspacePage";
+import { UsersPage } from "./pages/UsersPage";
 
 // Protected Route component
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
@@ -82,6 +83,16 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <WorkspacesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/workspace/:workspaceId/users"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <UsersPage />
+            </AppLayout>
           </ProtectedRoute>
         }
       />
