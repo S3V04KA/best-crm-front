@@ -85,6 +85,22 @@ export type {
   SelectSeparatorProps,
 } from './Select'
 
+export {
+  SearchableSelect,
+  SearchableSelectGroup,
+  SearchableSelectValue,
+  SearchableSelectTrigger,
+  SearchableSelectContent,
+  SearchableSelectLabel,
+  SearchableSelectItem,
+  SearchableSelectSeparator,
+  SearchableSelectScrollUpButton,
+  SearchableSelectScrollDownButton,
+} from './SearchableSelect'
+export type {
+  SearchableSelectProps,
+} from './SearchableSelect'
+
 export { Avatar, AvatarImage, AvatarFallback } from './Avatar'
 export type { AvatarProps, AvatarImageProps, AvatarFallbackProps } from './Avatar'
 

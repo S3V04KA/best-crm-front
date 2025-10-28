@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Card,
   CardHeader,
@@ -11,12 +11,19 @@ import {
   TableCell,
   Info,
   Button,
+  Input,
+  SearchableSelect,
+  SearchableSelectContent,
+  SearchableSelectItem,
+  SearchableSelectTrigger,
+  SearchableSelectValue,
 } from "@/components/ui";
-import { LeadsService, type LeadResponseDto } from "@/api";
+import { LeadsService, CompanyTypesService, type LeadResponseDto } from "@/api";
 import { useParams } from "react-router-dom";
 import {
   AddCompanyDialog,
   type Lead,
+  type CompanyType,
 } from "@/components/dialogs/AddCompanyDialog";
 import { EditCompanyDialog } from "@/components/dialogs/EditCompanyDialog";
 import { CallType, LeadStatus } from "@/types/lead";
@@ -34,10 +41,22 @@ export const LeadsPage: React.FC = () => {
   const { user } = useAuth();
   const workspaceId = useParams().workspaceId;
   const [leads, setLeads] = useState<LeadResponseDto[]>([]);
+  const [filteredLeads, setFilteredLeads] = useState<LeadResponseDto[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [initLead, setInitLead] = useState<Partial<Lead>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Состояние фильтров
+  const [filters, setFilters] = useState({
+    name: "",
+    companyType: "all",
+    status: "all",
+    callType: "all",
+  });
+  
+  // Типы компаний для фильтра
+  const [companyTypes, setCompanyTypes] = useState<CompanyType[]>([]);
   const permissionedManage = checkPermissions(user?.permissions, [
     PermissionCodes.leadManage,
   ]);
@@ -71,6 +90,45 @@ export const LeadsPage: React.FC = () => {
     }
   };
 
+  const loadCompanyTypes = async () => {
+    try {
+      const data = await CompanyTypesService.companyTypeControllerFindAll();
+      setCompanyTypes(data);
+    } catch (e: unknown) {
+      console.error("Ошибка при загрузке типов компаний:", e);
+    }
+  };
+
+  // Функция фильтрации компаний
+  const applyFilters = useCallback((leadsToFilter: LeadResponseDto[]) => {
+    return leadsToFilter.filter((lead) => {
+      // Фильтр по имени/email
+      if (filters.name) {
+        const searchTerm = filters.name.toLowerCase();
+        const matchesName = lead.name?.toLowerCase().includes(searchTerm);
+        const matchesEmail = lead.email?.toLowerCase().includes(searchTerm);
+        if (!matchesName && !matchesEmail) return false;
+      }
+
+      // Фильтр по типу компании
+      if (filters.companyType && filters.companyType !== "all") {
+        if (lead.companyType?.id !== filters.companyType) return false;
+      }
+
+      // Фильтр по статусу
+      if (filters.status && filters.status !== "all") {
+        if (lead.status?.toString() !== filters.status) return false;
+      }
+
+      // Фильтр по типу звонка
+      if (filters.callType && filters.callType !== "all") {
+        if (lead.callType?.toString() !== filters.callType) return false;
+      }
+
+      return true;
+    });
+  }, [filters]);
+
   const onDelete = async (id: string) => {
     setLoading(true);
     setError(null);
@@ -88,8 +146,15 @@ export const LeadsPage: React.FC = () => {
 
   useEffect(() => {
     loadLeads();
+    loadCompanyTypes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Применяем фильтры при изменении leads или filters
+  useEffect(() => {
+    const filtered = applyFilters(leads);
+    setFilteredLeads(filtered);
+  }, [leads, applyFilters]);
 
   return (
     <div className="space-y-4 w-full">
@@ -115,6 +180,103 @@ export const LeadsPage: React.FC = () => {
           </div>
         </CardHeader>
         <CardContent>
+          {/* Фильтры */}
+          <div className="mb-6 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Поиск по имени/email */}
+              <Input
+                placeholder="Поиск по названию или email..."
+                value={filters.name}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, name: e.target.value }))
+                }
+              />
+              
+              {/* Фильтр по типу компании */}
+              <SearchableSelect
+                value={filters.companyType}
+                onValueChange={(value: string) =>
+                  setFilters((prev) => ({ ...prev, companyType: value }))
+                }
+              >
+                <SearchableSelectTrigger>
+                  <SearchableSelectValue placeholder="Тип компании" />
+                </SearchableSelectTrigger>
+                <SearchableSelectContent>
+                  <SearchableSelectItem value="all">
+                    Все типы
+                  </SearchableSelectItem>
+                  {companyTypes.map((type) => (
+                    <SearchableSelectItem key={type.id} value={type.id || "unknown"}>
+                      {type.name}
+                    </SearchableSelectItem>
+                  ))}
+                </SearchableSelectContent>
+              </SearchableSelect>
+
+              {/* Фильтр по статусу */}
+              <SearchableSelect
+                value={filters.status}
+                onValueChange={(value: string) =>
+                  setFilters((prev) => ({ ...prev, status: value }))
+                }
+              >
+                <SearchableSelectTrigger>
+                  <SearchableSelectValue placeholder="Статус" />
+                </SearchableSelectTrigger>
+                <SearchableSelectContent>
+                  <SearchableSelectItem value="all">
+                    Все статусы
+                  </SearchableSelectItem>
+                  {Object.entries(LeadStatus).map(([key, value]) => (
+                    <SearchableSelectItem key={key} value={value.toString()}>
+                      {key}
+                    </SearchableSelectItem>
+                  ))}
+                </SearchableSelectContent>
+              </SearchableSelect>
+
+              {/* Фильтр по типу звонка */}
+              <SearchableSelect
+                value={filters.callType}
+                onValueChange={(value: string) =>
+                  setFilters((prev) => ({ ...prev, callType: value }))
+                }
+              >
+                <SearchableSelectTrigger>
+                  <SearchableSelectValue placeholder="Тип звонка" />
+                </SearchableSelectTrigger>
+                <SearchableSelectContent>
+                  <SearchableSelectItem value="all">
+                    Все типы звонков
+                  </SearchableSelectItem>
+                  {Object.entries(CallType).map(([key, value]) => (
+                    <SearchableSelectItem key={key} value={value.toString()}>
+                      {key}
+                    </SearchableSelectItem>
+                  ))}
+                </SearchableSelectContent>
+              </SearchableSelect>
+            </div>
+            
+            {/* Кнопка сброса фильтров */}
+            <div className="flex justify-end">
+              <Button
+                variant="ghost"
+                onClick={() =>
+                  setFilters({
+                    name: "",
+                    companyType: "all",
+                    status: "all",
+                    callType: "all",
+                  })
+                }
+              >
+                Сбросить фильтры
+              </Button>
+            </div>
+          </div>
+
           {loading ? (
             <div className="text-sm text-gray-600">Загрузка...</div>
           ) : (
@@ -124,7 +286,7 @@ export const LeadsPage: React.FC = () => {
                   <TableHead>Название</TableHead>
                   <TableHead>Тип компании</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead>Сайт</TableHead>
+                  <TableHead style={{width: 30}}>Сайт</TableHead>
                   <TableHead>Номер телефона</TableHead>
                   <TableHead>Комментарий</TableHead>
                   <TableHead>Статус звонка</TableHead>
@@ -138,7 +300,7 @@ export const LeadsPage: React.FC = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {leads.map((l) => (
+                {filteredLeads.map((l) => (
                   <TableRow
                     key={l.id}
                     style={{
@@ -158,7 +320,7 @@ export const LeadsPage: React.FC = () => {
                     <TableCell>{l.name}</TableCell>
                     <TableCell>{l.companyType?.name}</TableCell>
                     <TableCell>{l.email}</TableCell>
-                    <TableCell>{l.site}</TableCell>
+                    <TableCell style={{width: 30}}>{l.site}</TableCell>
                     <TableCell>{l.phoneNumber}</TableCell>
                     <TableCell>{l.comment}</TableCell>
                     <TableCell>
