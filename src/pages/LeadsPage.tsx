@@ -286,7 +286,7 @@ export const LeadsPage: React.FC = () => {
                   <TableHead>Название</TableHead>
                   <TableHead>Тип компании</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead style={{maxWidth: 30}}>Сайт</TableHead>
+                  <TableHead style={{maxWidth: 260}}>Сайт</TableHead>
                   <TableHead>Номер телефона</TableHead>
                   <TableHead>Комментарий</TableHead>
                   <TableHead>Статус звонка</TableHead>
@@ -320,7 +320,7 @@ export const LeadsPage: React.FC = () => {
                     <TableCell>{l.name}</TableCell>
                     <TableCell>{l.companyType?.name}</TableCell>
                     <TableCell>{l.email}</TableCell>
-                    <TableCell style={{maxWidth: 30}}>{l.site}</TableCell>
+                    <TableCell style={{maxWidth: 260}}>{l.site ? l.site?.length > 24 ? l.site?.slice(0, 22) + '...' : l.site : undefined}</TableCell>
                     <TableCell>{l.phoneNumber}</TableCell>
                     <TableCell>{l.comment}</TableCell>
                     <TableCell>
