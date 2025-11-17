@@ -283,19 +283,19 @@ export const LeadsPage: React.FC = () => {
             <Table verticalDividers>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Название</TableHead>
-                  <TableHead>Тип компании</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead style={{maxWidth: 260}}>Сайт</TableHead>
-                  <TableHead>Номер телефона</TableHead>
-                  <TableHead>Комментарий</TableHead>
-                  <TableHead>Статус звонка</TableHead>
-                  <TableHead>Статус</TableHead>
                   {permissionedManage ? (
                     <TableHead>Ответственный</TableHead>
                   ) : (
                     ""
                   )}
+                  <TableHead>Название</TableHead>
+                  <TableHead>Тип компании</TableHead>
+                  <TableHead style={{maxWidth: 170}}>Email</TableHead>
+                  <TableHead style={{maxWidth: 260}}>Сайт</TableHead>
+                  <TableHead>Номер телефона</TableHead>
+                  <TableHead>Комментарий</TableHead>
+                  <TableHead>Статус звонка</TableHead>
+                  <TableHead>Статус</TableHead>
                   {permissionedDelete && <TableHead> </TableHead>}
                 </TableRow>
               </TableHeader>
@@ -317,9 +317,16 @@ export const LeadsPage: React.FC = () => {
                       setOpen(true);
                     }}
                   >
+                    {permissionedManage ? (
+                      <TableCell>
+                        {l.responsible?.fullName || "Не назначен"}
+                      </TableCell>
+                    ) : (
+                      ""
+                    )}
                     <TableCell>{l.name}</TableCell>
                     <TableCell>{l.companyType?.name}</TableCell>
-                    <TableCell>{l.email}</TableCell>
+                    <TableCell style={{maxWidth: 170}}>{l.email ? l.email.length > 18 ? l.email.slice(0, 16) + '...' : l.email : undefined}</TableCell>
                     <TableCell style={{maxWidth: 260}}>{l.site ? l.site?.length > 24 ? l.site?.slice(0, 22) + '...' : l.site : undefined}</TableCell>
                     <TableCell>{l.phoneNumber}</TableCell>
                     <TableCell>{l.comment}</TableCell>
@@ -333,13 +340,6 @@ export const LeadsPage: React.FC = () => {
                         ? Object.keys(LeadStatus)[l.status]
                         : "Пока ничего"}
                     </TableCell>
-                    {permissionedManage ? (
-                      <TableCell>
-                        {l.responsible?.fullName || "Не назначен"}
-                      </TableCell>
-                    ) : (
-                      ""
-                    )}
                     {permissionedDelete && (
                       <TableCell>
                         <Button
